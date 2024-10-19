@@ -15,7 +15,6 @@ const filterSlice = createSlice({
           product.name.toLowerCase().includes(search.toLowerCase()) ||
           product.category.toLowerCase().includes(search.toLowerCase())
       );
-
       state.filteredProducts = tempProducts;
     },
   },
@@ -23,6 +22,6 @@ const filterSlice = createSlice({
 
 export const { FILTER_PRODUCTS } = filterSlice.actions;
 
-export const selectFilteredPoducts = (state) => state.filter.filteredProducts;
+export const selectFilteredProducts = (state) => state.filter.filteredProducts;
 
 export default filterSlice.reducer;
