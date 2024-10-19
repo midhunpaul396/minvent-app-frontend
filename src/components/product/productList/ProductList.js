@@ -8,12 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   FILTER_PRODUCTS,
   selectFilteredProducts,
-} from "../../../redux/features/products/filterSlice";
+} from "../../../redux/features/product/filterSlice";
 import ReactPaginate from "react-paginate";
 import {
   deleteProduct,
   getProducts,
-} from "../../../redux/features/products/productSlice";
+} from "../../../redux/features/product/productSlice";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
