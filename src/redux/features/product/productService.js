@@ -1,34 +1,32 @@
 import axios from "axios";
 
-export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const API_URL = `${BACKEND_URL}/api/products/`;
 
-// CREATE A NEW PRODUCT
+// Create New Product
 const createProduct = async (formData) => {
-  //we don't use try catch (we will use createAsyncThunk)
   const response = await axios.post(API_URL, formData);
   return response.data;
 };
 
-//GET ALL PRODUCTS
+// Get all products
 const getProducts = async () => {
   const response = await axios.get(API_URL);
   return response.data;
 };
 
-//DELETE A PRODUCT
+// Delete a Product
 const deleteProduct = async (id) => {
-  const response = await axios.delete(`${API_URL}${id}`);
+  const response = await axios.delete(API_URL + id);
   return response.data;
 };
-
-//GET A PRODUCT
+// Get a Product
 const getProduct = async (id) => {
-  const response = await axios.get(`${API_URL}${id}`);
+  const response = await axios.get(API_URL + id);
   return response.data;
 };
-
-//UPDATE A PRODUCT
+// Update Product
 const updateProduct = async (id, formData) => {
   const response = await axios.patch(`${API_URL}${id}`, formData);
   return response.data;
@@ -37,8 +35,9 @@ const updateProduct = async (id, formData) => {
 const productService = {
   createProduct,
   getProducts,
-  deleteProduct,
   getProduct,
+  deleteProduct,
   updateProduct,
 };
+
 export default productService;

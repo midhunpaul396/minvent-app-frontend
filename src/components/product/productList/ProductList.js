@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from "react";
-import "./productList.scss";
+import React, { useEffect, useState } from "react";
 import { SpinnerImg } from "../../loader/Loader";
+import "./productList.scss";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { GrOverview } from "react-icons/gr";
+import { AiOutlineEye } from "react-icons/ai";
 import Search from "../../search/Search";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FILTER_PRODUCTS,
-  selectFilteredProducts,
+  selectFilteredPoducts,
 } from "../../../redux/features/product/filterSlice";
 import ReactPaginate from "react-paginate";
+import Swal from "sweetalert2";
 import {
   deleteProduct,
   getProducts,
 } from "../../../redux/features/product/productSlice";
-import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
 const ProductList = ({ products, isLoading }) => {
   const [search, setSearch] = useState("");
-  const filteredProducts = useSelector(selectFilteredProducts);
+  const filteredProducts = useSelector(selectFilteredPoducts);
+
   const dispatch = useDispatch();
 
   const shortenText = (text, n) => {
@@ -31,6 +32,7 @@ const ProductList = ({ products, isLoading }) => {
   };
 
   const delProduct = async (id) => {
+    console.log(id);
     await dispatch(deleteProduct(id));
     await dispatch(getProducts());
   };
@@ -51,28 +53,24 @@ const ProductList = ({ products, isLoading }) => {
     });
   };
 
-  /***************************** BEGIN PAGINATION *****************************************/
-
+  //   Begin Pagination
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  let itemsPerPage = 5;
-  // Simulate fetching items from another resources.
-  // (This could be items from props; or items loaded in a local state
-  // from an API endpoint with useEffect and useState)
-  const endOffset = itemOffset + itemsPerPage;
-  console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-  const currentItems = filteredProducts.slice(itemOffset, endOffset);
-  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+  const itemsPerPage = 5;
 
-  // Invoke when user click to request another page.
+  useEffect(() => {
+    const endOffset = itemOffset + itemsPerPage;
+
+    setCurrentItems(filteredProducts.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(filteredProducts.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, filteredProducts]);
+
   const handlePageClick = (event) => {
     const newOffset = (event.selected * itemsPerPage) % filteredProducts.length;
-    console.log(
-      `User requested page number ${event.selected}, which is offset ${newOffset}`
-    );
     setItemOffset(newOffset);
   };
-
-  /***************************** END PAGINATION *****************************************/
+  //   End Pagination
 
   useEffect(() => {
     dispatch(FILTER_PRODUCTS({ products, search }));
@@ -93,10 +91,12 @@ const ProductList = ({ products, isLoading }) => {
             />
           </span>
         </div>
+
         {isLoading && <SpinnerImg />}
+
         <div className="table">
           {!isLoading && products.length === 0 ? (
-            <p>-- No products found, please add a product ...</p>
+            <p>-- No product found, please add a product...</p>
           ) : (
             <table>
               <thead>
@@ -120,17 +120,18 @@ const ProductList = ({ products, isLoading }) => {
                       <td>{shortenText(name, 16)}</td>
                       <td>{category}</td>
                       <td>
-                        {price} {" TND"}
+                        {"$"}
+                        {price}
                       </td>
                       <td>{quantity}</td>
                       <td>
+                        {"$"}
                         {price * quantity}
-                        {" TND"}
                       </td>
                       <td className="icons">
                         <span>
                           <Link to={`/product-detail/${_id}`}>
-                            <GrOverview size={20} color={"purple"} />
+                            <AiOutlineEye size={25} color={"purple"} />
                           </Link>
                         </span>
                         <span>
@@ -153,7 +154,6 @@ const ProductList = ({ products, isLoading }) => {
             </table>
           )}
         </div>
-
         <ReactPaginate
           breakLabel="..."
           nextLabel="Next"

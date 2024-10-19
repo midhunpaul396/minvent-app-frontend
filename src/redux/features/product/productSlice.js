@@ -11,13 +11,12 @@ const initialState = {
   message: "",
   totalStoreValue: 0,
   outOfStock: 0,
-  category: 0,
+  category: [],
 };
 
-//CREATE NEW PRODUCT
+// Create New Product
 export const createProduct = createAsyncThunk(
   "products/create",
-  /* thunkAPI is an object that is automatically provided to the createAsyncThunk payload creator function. It contains various useful properties */
   async (formData, thunkAPI) => {
     try {
       return await productService.createProduct(formData);
@@ -34,7 +33,7 @@ export const createProduct = createAsyncThunk(
   }
 );
 
-//GET ALL PRODUCTS
+// Get all products
 export const getProducts = createAsyncThunk(
   "products/getAll",
   async (_, thunkAPI) => {
@@ -53,7 +52,7 @@ export const getProducts = createAsyncThunk(
   }
 );
 
-//DELETE A PRODUCT
+// Delete a Product
 export const deleteProduct = createAsyncThunk(
   "products/delete",
   async (id, thunkAPI) => {
@@ -72,7 +71,7 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 
-//GET A PRODUCT
+// Get a product
 export const getProduct = createAsyncThunk(
   "products/getProduct",
   async (id, thunkAPI) => {
@@ -90,8 +89,7 @@ export const getProduct = createAsyncThunk(
     }
   }
 );
-
-//UPDATE PRODUCT
+// Update product
 export const updateProduct = createAsyncThunk(
   "products/updateProduct",
   async ({ id, formData }, thunkAPI) => {
@@ -125,31 +123,30 @@ const productSlice = createSlice({
       const totalValue = array.reduce((a, b) => {
         return a + b;
       }, 0);
-
       state.totalStoreValue = totalValue;
     },
-
-    CALC_OUT_OF_STOCK(state, action) {
+    CALC_OUTOFSTOCK(state, action) {
       const products = action.payload;
       const array = [];
       products.map((item) => {
         const { quantity } = item;
+
         return array.push(quantity);
       });
       let count = 0;
       array.forEach((number) => {
-        if (number == 0) {
+        if (number === 0 || number === "0") {
           count += 1;
         }
       });
       state.outOfStock = count;
     },
-
     CALC_CATEGORY(state, action) {
       const products = action.payload;
       const array = [];
       products.map((item) => {
         const { category } = item;
+
         return array.push(category);
       });
       const uniqueCategory = [...new Set(array)];
@@ -158,17 +155,16 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      /*  CREATE PRODUCT */
       .addCase(createProduct.pending, (state) => {
         state.isLoading = true;
-        state.isError = false;
       })
       .addCase(createProduct.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        state.isError = false;
         console.log(action.payload);
         state.products.push(action.payload);
-        toast.success("Products added successfully");
+        toast.success("Product added successfully");
       })
       .addCase(createProduct.rejected, (state, action) => {
         state.isLoading = false;
@@ -176,7 +172,6 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      /*  GET ALL PRODUCTS */
       .addCase(getProducts.pending, (state) => {
         state.isLoading = true;
       })
@@ -193,8 +188,6 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-
-      /*  DELETE A PRODUCT */
       .addCase(deleteProduct.pending, (state) => {
         state.isLoading = true;
       })
@@ -210,8 +203,6 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-
-      /*  GET A PRODUCT */
       .addCase(getProduct.pending, (state) => {
         state.isLoading = true;
       })
@@ -227,8 +218,6 @@ const productSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-
-      /*  UPDATE A PRODUCT */
       .addCase(updateProduct.pending, (state) => {
         state.isLoading = true;
       })
@@ -247,17 +236,13 @@ const productSlice = createSlice({
   },
 });
 
-export const { CALC_STORE_VALUE, CALC_OUT_OF_STOCK, CALC_CATEGORY } =
+export const { CALC_STORE_VALUE, CALC_OUTOFSTOCK, CALC_CATEGORY } =
   productSlice.actions;
 
 export const selectIsLoading = (state) => state.product.isLoading;
-
 export const selectProduct = (state) => state.product.product;
-
 export const selectTotalStoreValue = (state) => state.product.totalStoreValue;
-
-export const selectoutOfStock = (state) => state.product.outOfStock;
-
-export const selectAllCategories = (state) => state.product.category;
+export const selectOutOfStock = (state) => state.product.outOfStock;
+export const selectCategory = (state) => state.product.category;
 
 export default productSlice.reducer;
