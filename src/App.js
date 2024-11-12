@@ -27,11 +27,6 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Redirect to the external URL as soon as the app loads
-    window.location.replace("https://realbuy.onrender.com");
-  }, []);
-
-  useEffect(() => {
     async function loginStatus() {
       const status = await getLoginStatus();
       dispatch(SET_LOGIN(status));
