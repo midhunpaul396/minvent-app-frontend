@@ -23,13 +23,13 @@ const Home = () => {
         <ul className="home-links">
           <ShowOnLogout>
             <li>
-              <Link to="/register">Register</Link>
+              <Link to="/dashboard">Register</Link>
             </li>
           </ShowOnLogout>
           <ShowOnLogout>
             <li>
               <button className="--btn --btn-primary">
-                <Link to="/login">Login</Link>
+                <Link to="/dashboard">Login</Link>
               </button>
             </li>
           </ShowOnLogout>
